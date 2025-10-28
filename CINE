@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Cine en Pareja</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fdf6f0;
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+    h2 {
+      color: #c94f7c;
+    }
+    .section {
+      margin-bottom: 30px;
+      padding: 15px;
+      border: 2px solid #e0c4d3;
+      border-radius: 10px;
+      background: #fff;
+    }
+    textarea {
+      width: 100%;
+      height: 60px;
+      margin-top: 10px;
+    }
+    .rating {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .stars span {
+      font-size: 30px;
+      cursor: pointer;
+      color: lightgray;
+    }
+    .stars span.active {
+      color: gold;
+    }
+    .score {
+      margin-left: 15px;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    video, canvas {
+      display: block;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 10px;
+      padding: 8px 12px;
+      background-color: #c94f7c;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #a63c63;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🎬 Cine en Pareja</h2>
+
+  <div class="section">
+    <label for="movie">Nombre de la película:</label>
+    <input type="text" id="movie" placeholder="Escribe el título...">
+  </div>
+
+  <div class="section">
+    <h3>Publicidad W ⭐</h3>
+    <textarea placeholder="Comentario de Wilmer..."></textarea>
+    <div class="rating" id="ratingW">
+      <div class="stars">
+        <span data-value="1">★</span>
+        <span data-value="2">★</span>
+        <span data-value="3">★</span>
+        <span data-value="4">★</span>
+        <span data-value="5">★</span>
+      </div>
+      <div class="score">0.0 / 5</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Publicidad M ⭐</h3>
+    <textarea placeholder="Comentario de M..."></textarea>
+    <div class="rating" id="ratingM">
+      <div class="stars">
+        <span data-value="1">★</span>
+        <span data-value="2">★</span>
+        <span data-value="3">★</span>
+        <span data-value="4">★</span>
+        <span data-value="5">★</span>
+      </div>
+      <div class="score">0.0 / 5</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>📊 Comparación y Conclusión</h3>
+    <textarea placeholder="Escriban su conclusión conjunta..."></textarea>
+  </div>
+
+  <div class="section">
+    <h3>📸 Foto del momento</h3>
+    <video id="video" width="320" height="240" autoplay></video>
+    <button id="snap">Tomar foto</button>
+    <canvas id="canvas" width="320" height="240"></canvas>
+  </div>
+
+  <script>
+    // Función para activar estrellas
+    function setupRating(sectionId) {
+      const section = document.getElementById(sectionId);
+      const stars = section.querySelectorAll('.stars span');
+      const score = section.querySelector('.score');
+
+      stars.forEach(star => {
+        star.addEventListener('click', () => {
+          const val = parseInt(star.getAttribute('data-value'));
+          stars.forEach(s => s.classList.remove('active'));
+          for (let i = 0; i < val; i++) {
+            stars[i].classList.add('active');
+          }
+          score.textContent = ${val.toFixed(1)} / 5;
+        });
+      });
+    }
+
+    setupRating('ratingW');
+    setupRating('ratingM');
+
+    // Activar cámara
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const snap = document.getElementById('snap');
+    const context = canvas.getContext('2d');
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+        video.srcObject = stream;
+      });
+
+    snap.addEventListener('click', () => {
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    });
+  </script>
+
+</body>
+</html>
