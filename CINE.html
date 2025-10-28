@@ -1,171 +1,324 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Cine en Pareja</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cine</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #fdf6f0;
-      padding: 20px;
-      max-width: 800px;
-      margin: auto;
+    :root{
+      --bg1: #0f1724;
+      --bg2: #24132f;
+      --card: rgba(255,255,255,0.06);
+      --accent: #ff6b9a;
+      --accent-2: #7be0ff;
+      --glass: rgba(255,255,255,0.04);
+      --glass-2: rgba(255,255,255,0.02);
+      --text: #e6edf3;
+      --muted: #b7c2cb;
+      --gold: #ffd166;
     }
-    h2 {
-      color: #c94f7c;
+
+    /* Page background with subtle animated gradient */
+    html,body{
+      height:100%;
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color:var(--text);
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(123,224,255,0.06), transparent 8%),
+                  radial-gradient(1000px 500px at 90% 90%, rgba(255,107,154,0.04), transparent 10%),
+                  linear-gradient(160deg, var(--bg1), var(--bg2));
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-y:auto;
     }
-    .section {
-      margin-bottom: 30px;
-      padding: 15px;
-      border: 2px solid #e0c4d3;
-      border-radius: 10px;
-      background: #fff;
+
+    .container{
+      max-width:980px;
+      margin:36px auto;
+      padding:28px;
+      box-sizing:border-box;
+      position:relative;
     }
-    input[type="text"] {
-      width: 100%;
-      padding: 8px;
-      box-sizing: border-box;
-      margin-top: 8px;
+
+    /* Header / Hero */
+    header.hero{
+      display:flex;
+      align-items:center;
+      gap:18px;
+      margin-bottom:18px;
+      transform:translateY(0);
+      animation:heroIn 700ms cubic-bezier(.2,.9,.3,1);
     }
-    textarea {
-      width: 100%;
-      height: 60px;
-      margin-top: 10px;
-      box-sizing: border-box;
-      padding: 8px;
+    @keyframes heroIn{
+      from{opacity:0; transform:translateY(-10px) scale(.995)}
+      to{opacity:1; transform:translateY(0) scale(1)}
     }
-    .rating {
-      display: flex;
-      align-items: center;
-      margin-top: 10px;
+
+    .logo{
+      width:84px;
+      height:84px;
+      border-radius:14px;
+      background: linear-gradient(135deg,var(--accent),var(--accent-2));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 8px 30px rgba(2,6,23,0.6), inset 0 -6px 18px rgba(0,0,0,0.2);
+      position:relative;
+      overflow:hidden;
     }
-    .stars span {
-      font-size: 30px;
-      cursor: pointer;
-      color: lightgray;
-      user-select: none;
-      margin-right: 4px;
+    .logo::after{
+      content:"";
+      position:absolute;
+      left:-30%;
+      top:-10%;
+      width:200%;
+      height:200%;
+      background:radial-gradient(circle at 30% 30%, rgba(255,255,255,0.12), transparent 12%);
+      transform:rotate(12deg);
+      animation:shimmer 3s linear infinite;
+      mix-blend-mode:overlay;
+      opacity:0.7;
     }
-    .stars span.active {
-      color: gold;
+    @keyframes shimmer{ from{transform:translateX(-30%) rotate(12deg)} to{transform:translateX(30%) rotate(12deg)} }
+
+    .logo svg{ width:50px; height:50px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.35)); }
+
+    h1{
+      font-size:28px;
+      margin:0;
+      letter-spacing:0.4px;
     }
-    .stars span:hover,
-    .stars span:hover ~ span {
-      /* no-op: kept for clarity */
+    p.lead{ margin:4px 0 0; color:var(--muted); font-size:13px; }
+
+    /* Card style sections */
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.04);
+      padding:18px;
+      border-radius:14px;
+      margin-bottom:18px;
+      box-shadow: 0 6px 20px rgba(3,8,20,0.6);
+      backdrop-filter: blur(6px);
+      transition: transform .28s cubic-bezier(.2,.9,.3,1), box-shadow .28s;
     }
-    .score {
-      margin-left: 15px;
-      font-weight: bold;
-      font-size: 18px;
+    .card:hover{ transform: translateY(-6px); box-shadow:0 18px 50px rgba(2,6,23,0.7); }
+
+    label{ display:block; color:var(--muted); font-size:13px; margin-bottom:8px; }
+    input[type="text"], textarea{
+      width:100%;
+      padding:12px 14px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,0.03);
+      background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+      color:var(--text);
+      outline:none;
+      transition: box-shadow .18s, border-color .18s;
+      box-sizing:border-box;
+      resize:vertical;
     }
-    video, canvas {
-      display: block;
-      margin-top: 10px;
-      border: 1px solid #ccc;
-      max-width: 100%;
+    input[type="text"]:focus, textarea:focus{ box-shadow:0 6px 18px rgba(0,0,0,0.45); border-color: rgba(123,224,255,0.18); }
+
+    .row{ display:flex; gap:14px; align-items:flex-start; flex-wrap:wrap; }
+    .col{ flex:1 1 340px; min-width:240px; }
+
+    /* Ratings */
+    .rating{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-top:10px;
     }
-    button {
-      margin-top: 10px;
-      padding: 8px 12px;
-      background-color: #c94f7c;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
+    .stars{ display:flex; gap:6px; align-items:center; }
+    .stars span{
+      font-size:32px;
+      color:rgba(255,255,255,0.16);
+      cursor:pointer;
+      transition: transform .12s ease, color .12s ease;
+      user-select:none;
+      filter: drop-shadow(0 6px 18px rgba(0,0,0,0.55));
     }
-    button:hover {
-      background-color: #a63c63;
+    .stars span:hover{ transform: translateY(-6px) scale(1.06); }
+    .stars span.active{
+      color:var(--gold);
+      transform: translateY(-8px) scale(1.12);
+      text-shadow: 0 6px 18px rgba(255,209,102,0.12);
+      animation:pop .35s cubic-bezier(.2,.9,.3,1);
     }
-    .note {
-      color: #666;
-      font-size: 0.9rem;
-      margin-top: 6px;
+    @keyframes pop{ 0%{transform:scale(.8)} 60%{transform:scale(1.12)} 100%{transform:scale(1)} }
+
+    .score{
+      font-weight:600;
+      color:var(--accent-2);
+      min-width:96px;
+      text-align:left;
+      font-size:15px;
     }
-    .error {
-      color: #b00020;
-      margin-top: 8px;
-      font-weight: bold;
+
+    /* Video/photo area */
+    .camera{
+      display:flex;
+      gap:16px;
+      flex-wrap:wrap;
+      align-items:flex-start;
+    }
+    video, canvas{
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,0.04);
+      background:transparent;
+      display:block;
+      max-width:100%;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+    }
+    .controls{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      margin-top:8px;
+      flex-wrap:wrap;
+    }
+    button.cta{
+      background: linear-gradient(135deg,var(--accent),var(--accent-2));
+      color:#071523;
+      border:none;
+      padding:10px 14px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:700;
+      transition: transform .14s ease, box-shadow .14s ease, opacity .12s;
+      box-shadow:0 8px 26px rgba(36,19,47,0.36);
+    }
+    button.cta:active{ transform: translateY(2px) scale(.995); }
+    button:disabled{ opacity:0.5; cursor:not-allowed; transform:none; box-shadow:none; filter:grayscale(.2); }
+
+    .note{ color:var(--muted); font-size:13px; margin-top:8px; }
+    .error{ color:#ff9aa2; font-weight:700; margin-top:6px; }
+
+    /* Footer tiny */
+    .footer{ margin-top:18px; color:var(--muted); font-size:13px; text-align:center; }
+
+    /* Responsive tweaks */
+    @media (max-width:640px){
+      .logo{ width:64px; height:64px; }
+      h1{ font-size:22px; }
+      .col{ flex-basis:100%; }
+      .container{ padding:18px; }
     }
   </style>
 </head>
 <body>
-
-  <h2>🎬 Cine en Pareja</h2>
-
-  <div class="section">
-    <label for="movie">Nombre de la película:</label>
-    <input type="text" id="movie" placeholder="Escribe el título...">
-  </div>
-
-  <div class="section">
-    <h3>Publicidad W ⭐</h3>
-    <textarea id="commentW" placeholder="Comentario de Wilmer..."></textarea>
-    <div class="rating" id="ratingW">
-      <div class="stars" role="radiogroup" aria-label="Puntuación Wilmer">
-        <span data-value="1" role="radio" aria-checked="false">★</span>
-        <span data-value="2" role="radio" aria-checked="false">★</span>
-        <span data-value="3" role="radio" aria-checked="false">★</span>
-        <span data-value="4" role="radio" aria-checked="false">★</span>
-        <span data-value="5" role="radio" aria-checked="false">★</span>
+  <div class="container">
+    <header class="hero">
+      <div class="logo" aria-hidden="true">
+        <!-- simple film reel icon -->
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="3" width="20" height="18" rx="3" fill="rgba(255,255,255,0.12)"/>
+          <circle cx="7" cy="8" r="1.3" fill="white"/>
+          <circle cx="12" cy="8" r="1.3" fill="white"/>
+          <circle cx="17" cy="8" r="1.3" fill="white"/>
+          <rect x="2" y="15" width="20" height="1.2" rx="0.6" fill="rgba(0,0,0,0.25)"/>
+        </svg>
       </div>
-      <div class="score">0.0 / 5</div>
-    </div>
-  </div>
 
-  <div class="section">
-    <h3>Publicidad M ⭐</h3>
-    <textarea id="commentM" placeholder="Comentario de M..."></textarea>
-    <div class="rating" id="ratingM">
-      <div class="stars" role="radiogroup" aria-label="Puntuación M">
-        <span data-value="1" role="radio" aria-checked="false">★</span>
-        <span data-value="2" role="radio" aria-checked="false">★</span>
-        <span data-value="3" role="radio" aria-checked="false">★</span>
-        <span data-value="4" role="radio" aria-checked="false">★</span>
-        <span data-value="5" role="radio" aria-checked="false">★</span>
+      <div>
+        <h1>Cine</h1>
+        <p class="lead">Diseña tu momento: califica, comenta y captura la escena con estilo.</p>
       </div>
-      <div class="score">0.0 / 5</div>
+    </header>
+
+    <!-- Movie name -->
+    <div class="card">
+      <label for="movie">Nombre de la película</label>
+      <input id="movie" type="text" placeholder="Escribe el título..." />
     </div>
-  </div>
 
-  <div class="section">
-    <h3>📊 Comparación y Conclusión</h3>
-    <textarea id="conclusion" placeholder="Escriban su conclusión conjunta..."></textarea>
-  </div>
+    <!-- Ratings -->
+    <div class="card row">
+      <div class="col">
+        <label>Publicidad W</label>
+        <textarea id="commentW" placeholder="Comentario de Wilmer..."></textarea>
+        <div class="rating" id="ratingW">
+          <div class="stars" role="radiogroup" aria-label="Puntuación Wilmer">
+            <span data-value="1" role="radio" aria-checked="false">★</span>
+            <span data-value="2" role="radio" aria-checked="false">★</span>
+            <span data-value="3" role="radio" aria-checked="false">★</span>
+            <span data-value="4" role="radio" aria-checked="false">★</span>
+            <span data-value="5" role="radio" aria-checked="false">★</span>
+          </div>
+          <div class="score">0.0 / 5</div>
+        </div>
+      </div>
 
-  <div class="section">
-    <h3>📸 Foto del momento</h3>
-    <video id="video" width="320" height="240" autoplay playsinline muted></video>
-    <button id="snap">Tomar foto</button>
-    <canvas id="canvas" width="320" height="240"></canvas>
-    <div class="note">Nota: Para usar la cámara necesitas abrir este archivo desde un servidor local (http://localhost) o servirlo vía HTTPS. No funcionará la cámara desde file://</div>
-    <div id="cameraError" class="error" aria-live="polite"></div>
+      <div class="col">
+        <label>Publicidad M</label>
+        <textarea id="commentM" placeholder="Comentario de M..."></textarea>
+        <div class="rating" id="ratingM">
+          <div class="stars" role="radiogroup" aria-label="Puntuación M">
+            <span data-value="1" role="radio" aria-checked="false">★</span>
+            <span data-value="2" role="radio" aria-checked="false">★</span>
+            <span data-value="3" role="radio" aria-checked="false">★</span>
+            <span data-value="4" role="radio" aria-checked="false">★</span>
+            <span data-value="5" role="radio" aria-checked="false">★</span>
+          </div>
+          <div class="score">0.0 / 5</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Conclusion -->
+    <div class="card">
+      <label>📊 Comparación y Conclusión</label>
+      <textarea id="conclusion" placeholder="Escriban su conclusión conjunta..."></textarea>
+    </div>
+
+    <!-- Camera / Photo -->
+    <div class="card">
+      <label>📸 Foto del momento</label>
+      <div class="camera">
+        <div style="flex:1 1 320px; min-width:260px;">
+          <video id="video" autoplay playsinline muted></video>
+        </div>
+        <div style="width:320px; display:flex; flex-direction:column; gap:10px; align-items:stretch;">
+          <canvas id="canvas" width="320" height="240"></canvas>
+          <div class="controls">
+            <button id="snap" class="cta" disabled>Tomar foto</button>
+            <button id="download" class="cta" disabled>Descargar</button>
+            <button id="stop" class="cta" style="background:linear-gradient(135deg,#ff9aa2,#ff6b9a);">Detener cámara</button>
+          </div>
+          <div class="note">La cámara requiere HTTPS o localhost. Si no ves imagen, revisa permisos.</div>
+          <div id="cameraError" class="error" aria-live="polite"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">Hecho con ❤️ — tu sitio en GitHub Pages</div>
   </div>
 
   <script>
-    // Función para activar estrellas
+    // Rating setup (works for both ratingW and ratingM)
     function setupRating(sectionId) {
       const section = document.getElementById(sectionId);
       const stars = section.querySelectorAll('.stars span');
       const score = section.querySelector('.score');
 
-      stars.forEach((star, index) => {
+      function setActive(val) {
+        stars.forEach((s, i) => {
+          if (i < val) {
+            s.classList.add('active');
+            s.setAttribute('aria-checked', 'true');
+          } else {
+            s.classList.remove('active');
+            s.setAttribute('aria-checked', 'false');
+          }
+        });
+        score.textContent = val.toFixed(1) + ' / 5';
+      }
+
+      stars.forEach(star => {
+        star.setAttribute('tabindex', '0');
         star.addEventListener('click', () => {
           const val = parseInt(star.getAttribute('data-value'), 10);
-          stars.forEach((s, i) => {
-            if (i < val) {
-              s.classList.add('active');
-              s.setAttribute('aria-checked', 'true');
-            } else {
-              s.classList.remove('active');
-              s.setAttribute('aria-checked', 'false');
-            }
-          });
-          // CORRECCIÓN: usar concatenación en lugar de template literal mal colocado
-          score.textContent = val.toFixed(1) + ' / 5';
+          setActive(val);
         });
-
-        // Permitir selección por teclado (Enter / Space)
-        star.setAttribute('tabindex', '0');
         star.addEventListener('keydown', (e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
@@ -178,34 +331,105 @@
     setupRating('ratingW');
     setupRating('ratingM');
 
-    // Activar cámara
+    // Camera & photo logic
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
     const snap = document.getElementById('snap');
+    const downloadBtn = document.getElementById('download');
+    const stopBtn = document.getElementById('stop');
     const context = canvas.getContext('2d');
     const cameraError = document.getElementById('cameraError');
 
-    // Pedimos la cámara (esto exige contexto seguro: localhost o https)
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({ video: true })
+    let currentStream = null;
+
+    // disable controls until ready
+    snap.disabled = true;
+    downloadBtn.disabled = true;
+
+    function enableControls() {
+      snap.disabled = false;
+      downloadBtn.disabled = false;
+    }
+
+    function startCamera() {
+      cameraError.textContent = '';
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        cameraError.textContent = 'getUserMedia no soportado por este navegador.';
+        return;
+      }
+
+      navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720 } })
         .then(stream => {
+          currentStream = stream;
           video.srcObject = stream;
-          // Algunos navegadores necesitan play() explícito si no se reproduce
-          video.play().catch(() => {});
+          video.play().catch(()=>{});
+          // cuando metadata esté lista, ajustar canvas
+          video.addEventListener('loadedmetadata', () => {
+            // Ajustar canvas a la resolución real del video
+            if (video.videoWidth && video.videoHeight) {
+              canvas.width = video.videoWidth;
+              canvas.height = video.videoHeight;
+            }
+            enableControls();
+          }, { once: true });
         })
         .catch(err => {
           console.error('Error al acceder a la cámara:', err);
           cameraError.textContent = 'No se pudo acceder a la cámara. Comprueba permisos o usa HTTPS / localhost.';
         });
-    } else {
-      cameraError.textContent = 'getUserMedia no soportado por este navegador.';
     }
 
+    function stopCamera() {
+      if (currentStream) {
+        currentStream.getTracks().forEach(t => t.stop());
+        currentStream = null;
+        video.srcObject = null;
+      }
+      snap.disabled = true;
+      downloadBtn.disabled = true;
+    }
+
+    // start automatically (Pages is HTTPS so it should work)
+    startCamera();
+
     snap.addEventListener('click', () => {
-      // Dibuja el frame actual del video en el canvas
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      try {
+        // asegurar tamaño antes de dibujar
+        if (video.videoWidth && video.videoHeight) {
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+        }
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        // small animation feedback
+        canvas.style.transform = 'scale(0.995)';
+        setTimeout(()=> canvas.style.transform = '', 120);
+      } catch(e) {
+        console.error('Error al dibujar imagen:', e);
+      }
+    });
+
+    // download the image from canvas
+    downloadBtn.addEventListener('click', () => {
+      try {
+        const url = canvas.toDataURL('image/png');
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'foto-cine.png';
+        a.click();
+      } catch(e) {
+        console.error('Error al descargar:', e);
+      }
+    });
+
+    stopBtn.addEventListener('click', () => {
+      stopCamera();
+      cameraError.textContent = 'Cámara detenida manualmente.';
+    });
+
+    // free camera on page unload
+    window.addEventListener('beforeunload', () => {
+      if (currentStream) currentStream.getTracks().forEach(t => t.stop());
     });
   </script>
-
 </body>
 </html>
