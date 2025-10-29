@@ -331,64 +331,6 @@
     setupRating('ratingW');
     setupRating('ratingM');
 
-    // Camera & photo logic
-    const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    const snap = document.getElementById('snap');
-    const downloadBtn = document.getElementById('download');
-    const stopBtn = document.getElementById('stop');
-    const context = canvas.getContext('2d');
-    const cameraError = document.getElementById('cameraError');
-
-    let currentStream = null;
-
-    // disable controls until ready
-    snap.disabled = true;
-    downloadBtn.disabled = true;
-
-    function enableControls() {
-      snap.disabled = false;
-      downloadBtn.disabled = false;
-    }
-
-    function startCamera() {
-      cameraError.textContent = '';
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        cameraError.textContent = 'getUserMedia no soportado por este navegador.';
-        return;
-      }
-
-      navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720 } })
-        .then(stream => {
-          currentStream = stream;
-          video.srcObject = stream;
-          video.play().catch(()=>{});
-          // cuando metadata esté lista, ajustar canvas
-          video.addEventListener('loadedmetadata', () => {
-            // Ajustar canvas a la resolución real del video
-            if (video.videoWidth && video.videoHeight) {
-              canvas.width = video.videoWidth;
-              canvas.height = video.videoHeight;
-            }
-            enableControls();
-          }, { once: true });
-        })
-        .catch(err => {
-          console.error('Error al acceder a la cámara:', err);
-          cameraError.textContent = 'No se pudo acceder a la cámara. Comprueba permisos o usa HTTPS / localhost.';
-        });
-    }
-
-    function stopCamera() {
-      if (currentStream) {
-        currentStream.getTracks().forEach(t => t.stop());
-        currentStream = null;
-        video.srcObject = null;
-      }
-      snap.disabled = true;
-      downloadBtn.disabled = true;
-    }
-
     // start automatically (Pages is HTTPS so it should work)
     startCamera();
 
