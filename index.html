@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Cine</title>
+  <title>Reseñas de Cine</title>
   <style>
     :root {
       --bg1: #0f1724;
       --bg2: #24132f;
-      --card: rgba(255,255,255,0.06);
       --accent: #ff6b9a;
       --accent-2: #7be0ff;
       --text: #e6edf3;
@@ -21,6 +20,7 @@
       font-family: Inter, sans-serif;
       background: linear-gradient(160deg, var(--bg1), var(--bg2));
       color: var(--text);
+      transition: background 0.5s ease;
     }
 
     .container {
@@ -30,15 +30,22 @@
     }
 
     h1 {
-      font-size: 28px;
-      margin-bottom: 10px;
+      font-size: 32px;
+      margin-bottom: 20px;
+      text-align: center;
     }
 
     .card {
-      background: var(--card);
+      background: rgba(255,255,255,0.05);
       padding: 20px;
       border-radius: 12px;
       margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.02);
     }
 
     label {
@@ -52,7 +59,7 @@
       padding: 10px;
       border-radius: 8px;
       border: none;
-      background: rgba(255,255,255,0.05);
+      background: rgba(255,255,255,0.08);
       color: var(--text);
       margin-bottom: 10px;
     }
@@ -61,10 +68,12 @@
       font-size: 24px;
       cursor: pointer;
       color: rgba(255,255,255,0.2);
+      transition: transform 0.2s ease;
     }
 
     .stars span.active {
       color: var(--gold);
+      transform: scale(1.2);
     }
 
     .rating {
@@ -85,7 +94,7 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      margin-top: 10px;
+      margin-right: 10px;
     }
 
     .btn:hover {
@@ -96,22 +105,35 @@
       display: none;
     }
 
-    .history {
+    .presentation-mode input,
+    .presentation-mode select,
+    .presentation-mode textarea,
+    .presentation-mode .btn {
+      display: none;
+    }
+
+    .bar {
+      height: 10px;
+      background: var(--accent-2);
+      border-radius: 6px;
+      margin-top: 6px;
+      transition: width 0.3s ease;
+    }
+
+    .history-entry {
+      margin-bottom: 12px;
       font-size: 14px;
       color: var(--muted);
     }
 
-    .presentation-mode .card input,
-    .presentation-mode .card textarea,
-    .presentation-mode .card select,
-    .presentation-mode .btn {
-      display: none;
+    .filter {
+      margin-bottom: 10px;
     }
   </style>
 </head>
 <body>
   <div class="container" id="mainContainer">
-    <h1>Cine: Reseña y Comparación</h1>
+    <h1>🎬 Reseñas de Cine</h1>
 
     <div class="card">
       <label for="movie">Título de la película</label>
@@ -162,12 +184,24 @@
       <label>📊 Conclusión conjunta</label>
       <textarea id="conclusion" placeholder="Escriban su conclusión..."></textarea>
       <div id="averageScore" class="score">Promedio: 0.0</div>
+      <div id="averageBar" class="bar" style="width: 0%;"></div>
     </div>
 
     <button class="btn" onclick="saveReview()">Guardar reseña</button>
     <button class="btn" onclick="togglePresentation()">Modo presentación</button>
 
-    <div class="card history">
+    <div class="card">
+      <div class="filter">
+        <label for="filterGenre">Filtrar por género</label>
+        <select id="filterGenre" onchange="renderHistory()">
+          <option value="">Todos</option>
+          <option value="Acción">Acción</option>
+          <option value="Comedia">Comedia</option>
+          <option value="Drama">Drama</option>
+          <option value="Suspenso">Suspenso</option>
+          <option value="Animación">Animación</option>
+        </select>
+      </div>
       <h3>📜 Historial de reseñas</h3>
       <div id="historyList"></div>
     </div>
@@ -203,6 +237,7 @@
       const r2 = getRating('ratingM');
       const avg = ((r1 + r2) / 2).toFixed(1);
       document.getElementById('averageScore').textContent = 'Promedio: ' + avg;
+      document.getElementById('averageBar').style.width = (avg * 20) + '%';
     }
 
     function saveReview() {
@@ -215,35 +250,40 @@
       const scoreM = getRating('ratingM');
       const avg = ((scoreW + scoreM) / 2).toFixed(1);
 
-      const review = {
-        title, genre, scoreW, scoreM, avg, commentW, commentM, conclusion
-      };
+      const review = { title,      genre, scoreW, scoreM, avg, commentW, commentM, conclusion
+    };
 
-      const history = JSON.parse(localStorage.getItem('cineReviews') || '[]');
-      history.unshift(review);
-      localStorage.setItem('cineReviews', JSON.stringify(history));
-      renderHistory();
-    }
-
-    function renderHistory() {
-      const history = JSON.parse(localStorage.getItem('cineReviews') || '[]');
-      const container = document.getElementById('historyList');
-      container.innerHTML = history.map(r => `
-        <div style="margin-bottom:12px;">
-          <strong>${r.title}</strong> (${r.genre})<br/>
-          Wilmer: ${r.scoreW} ★ — M: ${r.scoreM} ★ — Promedio: ${r.avg}<br/>
-          <em>Conclusión:</em> ${r.conclusion}
-        </div>
-      `).join('');
-    }
-
-    function togglePresentation() {
-      document.getElementById('mainContainer').classList.toggle('presentation-mode');
-    }
-
-    setupRating('ratingW');
-    setupRating('ratingM');
+    const history = JSON.parse(localStorage.getItem('cineReviews') || '[]');
+    history.unshift(review);
+    localStorage.setItem('cineReviews', JSON.stringify(history));
     renderHistory();
-  </script>
-</body>
-</html>
+  }
+
+  function renderHistory() {
+    const history = JSON.parse(localStorage.getItem('cineReviews') || '[]');
+    const filter = document.getElementById('filterGenre').value;
+    const container = document.getElementById('historyList');
+    container.innerHTML = '';
+
+    const filtered = filter ? history.filter(r => r.genre === filter) : history;
+
+    filtered.forEach(r => {
+      const div = document.createElement('div');
+      div.className = 'history-entry';
+      div.innerHTML = `
+        <strong>${r.title}</strong> (${r.genre})<br/>
+        Wilmer: ${r.scoreW} ★ — M: ${r.scoreM} ★ — Promedio: ${r.avg}<br/>
+        <em>Conclusión:</em> ${r.conclusion}
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  function togglePresentation() {
+    document.getElementById('mainContainer').classList.toggle('presentation-mode');
+  }
+
+  setupRating('ratingW');
+  setupRating('ratingM');
+  renderHistory();
+</script>
