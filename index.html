@@ -5,337 +5,245 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Cine</title>
   <style>
-    :root{
+    :root {
       --bg1: #0f1724;
       --bg2: #24132f;
       --card: rgba(255,255,255,0.06);
       --accent: #ff6b9a;
       --accent-2: #7be0ff;
-      --glass: rgba(255,255,255,0.04);
-      --glass-2: rgba(255,255,255,0.02);
       --text: #e6edf3;
       --muted: #b7c2cb;
       --gold: #ffd166;
     }
 
-    /* Page background with subtle animated gradient */
-    html,body{
-      height:100%;
-      margin:0;
-      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      color:var(--text);
-      background: radial-gradient(1200px 600px at 10% 10%, rgba(123,224,255,0.06), transparent 8%),
-                  radial-gradient(1000px 500px at 90% 90%, rgba(255,107,154,0.04), transparent 10%),
-                  linear-gradient(160deg, var(--bg1), var(--bg2));
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      overflow-y:auto;
+    body {
+      margin: 0;
+      font-family: Inter, sans-serif;
+      background: linear-gradient(160deg, var(--bg1), var(--bg2));
+      color: var(--text);
     }
 
-    .container{
-      max-width:980px;
-      margin:36px auto;
-      padding:28px;
-      box-sizing:border-box;
-      position:relative;
+    .container {
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 20px;
     }
 
-    /* Header / Hero */
-    header.hero{
-      display:flex;
-      align-items:center;
-      gap:18px;
-      margin-bottom:18px;
-      transform:translateY(0);
-      animation:heroIn 700ms cubic-bezier(.2,.9,.3,1);
-    }
-    @keyframes heroIn{
-      from{opacity:0; transform:translateY(-10px) scale(.995)}
-      to{opacity:1; transform:translateY(0) scale(1)}
+    h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
     }
 
-    .logo{
-      width:84px;
-      height:84px;
-      border-radius:14px;
-      background: linear-gradient(135deg,var(--accent),var(--accent-2));
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      box-shadow:0 8px 30px rgba(2,6,23,0.6), inset 0 -6px 18px rgba(0,0,0,0.2);
-      position:relative;
-      overflow:hidden;
-    }
-    .logo::after{
-      content:"";
-      position:absolute;
-      left:-30%;
-      top:-10%;
-      width:200%;
-      height:200%;
-      background:radial-gradient(circle at 30% 30%, rgba(255,255,255,0.12), transparent 12%);
-      transform:rotate(12deg);
-      animation:shimmer 3s linear infinite;
-      mix-blend-mode:overlay;
-      opacity:0.7;
-    }
-    @keyframes shimmer{ from{transform:translateX(-30%) rotate(12deg)} to{transform:translateX(30%) rotate(12deg)} }
-
-    .logo svg{ width:50px; height:50px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.35)); }
-
-    h1{
-      font-size:28px;
-      margin:0;
-      letter-spacing:0.4px;
-    }
-    p.lead{ margin:4px 0 0; color:var(--muted); font-size:13px; }
-
-    /* Card style sections */
-    .card{
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border: 1px solid rgba(255,255,255,0.04);
-      padding:18px;
-      border-radius:14px;
-      margin-bottom:18px;
-      box-shadow: 0 6px 20px rgba(3,8,20,0.6);
-      backdrop-filter: blur(6px);
-      transition: transform .28s cubic-bezier(.2,.9,.3,1), box-shadow .28s;
-    }
-    .card:hover{ transform: translateY(-6px); box-shadow:0 18px 50px rgba(2,6,23,0.7); }
-
-    label{ display:block; color:var(--muted); font-size:13px; margin-bottom:8px; }
-    input[type="text"], textarea{
-      width:100%;
-      padding:12px 14px;
-      border-radius:10px;
-      border:1px solid rgba(255,255,255,0.03);
-      background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
-      color:var(--text);
-      outline:none;
-      transition: box-shadow .18s, border-color .18s;
-      box-sizing:border-box;
-      resize:vertical;
-    }
-    input[type="text"]:focus, textarea:focus{ box-shadow:0 6px 18px rgba(0,0,0,0.45); border-color: rgba(123,224,255,0.18); }
-
-    .row{ display:flex; gap:14px; align-items:flex-start; flex-wrap:wrap; }
-    .col{ flex:1 1 340px; min-width:240px; }
-
-    /* Ratings */
-    .rating{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      margin-top:10px;
-    }
-    .stars{ display:flex; gap:6px; align-items:center; }
-    .stars span{
-      font-size:32px;
-      color:rgba(255,255,255,0.16);
-      cursor:pointer;
-      transition: transform .12s ease, color .12s ease;
-      user-select:none;
-      filter: drop-shadow(0 6px 18px rgba(0,0,0,0.55));
-    }
-    .stars span:hover{ transform: translateY(-6px) scale(1.06); }
-    .stars span.active{
-      color:var(--gold);
-      transform: translateY(-8px) scale(1.12);
-      text-shadow: 0 6px 18px rgba(255,209,102,0.12);
-      animation:pop .35s cubic-bezier(.2,.9,.3,1);
-    }
-    @keyframes pop{ 0%{transform:scale(.8)} 60%{transform:scale(1.12)} 100%{transform:scale(1)} }
-
-    .score{
-      font-weight:600;
-      color:var(--accent-2);
-      min-width:96px;
-      text-align:left;
-      font-size:15px;
+    .card {
+      background: var(--card);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
     }
 
-    /* Video/photo area */
-    
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+    }
 
-    /* Footer tiny */
-    .footer{ margin-top:18px; color:var(--muted); font-size:13px; text-align:center; }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      margin-bottom: 10px;
+    }
 
-    /* Responsive tweaks */
-    @media (max-width:640px){
-      .logo{ width:64px; height:64px; }
-      h1{ font-size:22px; }
-      .col{ flex-basis:100%; }
-      .container{ padding:18px; }
+    .stars span {
+      font-size: 24px;
+      cursor: pointer;
+      color: rgba(255,255,255,0.2);
+    }
+
+    .stars span.active {
+      color: var(--gold);
+    }
+
+    .rating {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .score {
+      font-weight: bold;
+      color: var(--accent-2);
+    }
+
+    .btn {
+      padding: 10px 16px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .btn:hover {
+      background: var(--accent-2);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .history {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .presentation-mode .card input,
+    .presentation-mode .card textarea,
+    .presentation-mode .card select,
+    .presentation-mode .btn {
+      display: none;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header class="hero">
-      <div class="logo" aria-hidden="true">
-        <!-- simple film reel icon -->
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-          <rect x="2" y="3" width="20" height="18" rx="3" fill="rgba(255,255,255,0.12)"/>
-          <circle cx="7" cy="8" r="1.3" fill="white"/>
-          <circle cx="12" cy="8" r="1.3" fill="white"/>
-          <circle cx="17" cy="8" r="1.3" fill="white"/>
-          <rect x="2" y="15" width="20" height="1.2" rx="0.6" fill="rgba(0,0,0,0.25)"/>
-        </svg>
-      </div>
+  <div class="container" id="mainContainer">
+    <h1>Cine: Reseña y Comparación</h1>
 
-      <div>
-        <h1>Cine</h1>
-        <p class="lead">Diseña tu momento: califica, comenta y captura la escena con estilo.</p>
-      </div>
-    </header>
-
-    <!-- Movie name -->
     <div class="card">
-      <label for="movie">Nombre de la película</label>
+      <label for="movie">Título de la película</label>
       <input id="movie" type="text" placeholder="Escribe el título..." />
+
+      <label for="genre">Género</label>
+      <select id="genre">
+        <option value="">Selecciona género</option>
+        <option value="Acción">Acción</option>
+        <option value="Comedia">Comedia</option>
+        <option value="Drama">Drama</option>
+        <option value="Suspenso">Suspenso</option>
+        <option value="Animación">Animación</option>
+      </select>
     </div>
 
-    <!-- Ratings -->
-    <div class="card row">
-      <div class="col">
-        <label>Publicidad W</label>
-        <textarea id="commentW" placeholder="Comentario de Wilmer..."></textarea>
-        <div class="rating" id="ratingW">
-          <div class="stars" role="radiogroup" aria-label="Puntuación Wilmer">
-            <span data-value="1" role="radio" aria-checked="false">★</span>
-            <span data-value="2" role="radio" aria-checked="false">★</span>
-            <span data-value="3" role="radio" aria-checked="false">★</span>
-            <span data-value="4" role="radio" aria-checked="false">★</span>
-            <span data-value="5" role="radio" aria-checked="false">★</span>
-          </div>
-          <div class="score">0.0 / 5</div>
-        </div>
-      </div>
-
-      <div class="col">
-        <label>Publicidad M</label>
-        <textarea id="commentM" placeholder="Comentario de M..."></textarea>
-        <div class="rating" id="ratingM">
-          <div class="stars" role="radiogroup" aria-label="Puntuación M">
-            <span data-value="1" role="radio" aria-checked="false">★</span>
-            <span data-value="2" role="radio" aria-checked="false">★</span>
-            <span data-value="3" role="radio" aria-checked="false">★</span>
-            <span data-value="4" role="radio" aria-checked="false">★</span>
-            <span data-value="5" role="radio" aria-checked="false">★</span>
-          </div>
-          <div class="score">0.0 / 5</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Conclusion -->
     <div class="card">
-      <label>📊 Comparación y Conclusión</label>
-      <textarea id="conclusion" placeholder="Escriban su conclusión conjunta..."></textarea>
-    </div>
-
-    <!-- Camera / Photo -->
-    <div class="card">
-      <label>📸 Foto del momento</label>
-      <div class="camera">
-        <div style="flex:1 1 320px; min-width:260px;">
-          <video id="video" autoplay playsinline muted></video>
+      <label>Publicidad W</label>
+      <textarea id="commentW" placeholder="Comentario de Wilmer..."></textarea>
+      <div class="rating" id="ratingW">
+        <div class="stars">
+          <span data-value="1">★</span>
+          <span data-value="2">★</span>
+          <span data-value="3">★</span>
+          <span data-value="4">★</span>
+          <span data-value="5">★</span>
         </div>
-        <div style="width:320px; display:flex; flex-direction:column; gap:10px; align-items:stretch;">
-          <canvas id="canvas" width="320" height="240"></canvas>
-          <div class="controls">
-            <button id="snap" class="cta" disabled>Tomar foto</button>
-            <button id="download" class="cta" disabled>Descargar</button>
-            <button id="stop" class="cta" style="background:linear-gradient(135deg,#ff9aa2,#ff6b9a);">Detener cámara</button>
-          </div>
-          <div class="note">La cámara requiere HTTPS o localhost. Si no ves imagen, revisa permisos.</div>
-          <div id="cameraError" class="error" aria-live="polite"></div>
-        </div>
+        <div class="score">0.0 / 5</div>
       </div>
     </div>
 
-    <div class="footer">Hecho con ❤️ — tu sitio en GitHub Pages</div>
+    <div class="card">
+      <label>Publicidad M</label>
+      <textarea id="commentM" placeholder="Comentario de M..."></textarea>
+      <div class="rating" id="ratingM">
+        <div class="stars">
+          <span data-value="1">★</span>
+          <span data-value="2">★</span>
+          <span data-value="3">★</span>
+          <span data-value="4">★</span>
+          <span data-value="5">★</span>
+        </div>
+        <div class="score">0.0 / 5</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <label>📊 Conclusión conjunta</label>
+      <textarea id="conclusion" placeholder="Escriban su conclusión..."></textarea>
+      <div id="averageScore" class="score">Promedio: 0.0</div>
+    </div>
+
+    <button class="btn" onclick="saveReview()">Guardar reseña</button>
+    <button class="btn" onclick="togglePresentation()">Modo presentación</button>
+
+    <div class="card history">
+      <h3>📜 Historial de reseñas</h3>
+      <div id="historyList"></div>
+    </div>
   </div>
 
   <script>
-    // Rating setup (works for both ratingW and ratingM)
-    function setupRating(sectionId) {
-      const section = document.getElementById(sectionId);
-      const stars = section.querySelectorAll('.stars span');
-      const score = section.querySelector('.score');
-
-      function setActive(val) {
-        stars.forEach((s, i) => {
-          if (i < val) {
-            s.classList.add('active');
-            s.setAttribute('aria-checked', 'true');
-          } else {
-            s.classList.remove('active');
-            s.setAttribute('aria-checked', 'false');
-          }
-        });
-        score.textContent = val.toFixed(1) + ' / 5';
-      }
+    function setupRating(id) {
+      const container = document.getElementById(id);
+      const stars = container.querySelectorAll('.stars span');
+      const score = container.querySelector('.score');
 
       stars.forEach(star => {
-        star.setAttribute('tabindex', '0');
         star.addEventListener('click', () => {
-          const val = parseInt(star.getAttribute('data-value'), 10);
-          setActive(val);
-        });
-        star.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            star.click();
-          }
+          const val = parseInt(star.getAttribute('data-value'));
+          stars.forEach((s, i) => {
+            s.classList.toggle('active', i < val);
+          });
+          score.textContent = val.toFixed(1) + ' / 5';
+          updateAverage();
         });
       });
     }
 
+    function getRating(id) {
+      const stars = document.getElementById(id).querySelectorAll('.stars span');
+      let active = 0;
+      stars.forEach(s => { if (s.classList.contains('active')) active++; });
+      return active;
+    }
+
+    function updateAverage() {
+      const r1 = getRating('ratingW');
+      const r2 = getRating('ratingM');
+      const avg = ((r1 + r2) / 2).toFixed(1);
+      document.getElementById('averageScore').textContent = 'Promedio: ' + avg;
+    }
+
+    function saveReview() {
+      const title = document.getElementById('movie').value;
+      const genre = document.getElementById('genre').value;
+      const commentW = document.getElementById('commentW').value;
+      const commentM = document.getElementById('commentM').value;
+      const conclusion = document.getElementById('conclusion').value;
+      const scoreW = getRating('ratingW');
+      const scoreM = getRating('ratingM');
+      const avg = ((scoreW + scoreM) / 2).toFixed(1);
+
+      const review = {
+        title, genre, scoreW, scoreM, avg, commentW, commentM, conclusion
+      };
+
+      const history = JSON.parse(localStorage.getItem('cineReviews') || '[]');
+      history.unshift(review);
+      localStorage.setItem('cineReviews', JSON.stringify(history));
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const history = JSON.parse(localStorage.getItem('cineReviews') || '[]');
+      const container = document.getElementById('historyList');
+      container.innerHTML = history.map(r => `
+        <div style="margin-bottom:12px;">
+          <strong>${r.title}</strong> (${r.genre})<br/>
+          Wilmer: ${r.scoreW} ★ — M: ${r.scoreM} ★ — Promedio: ${r.avg}<br/>
+          <em>Conclusión:</em> ${r.conclusion}
+        </div>
+      `).join('');
+    }
+
+    function togglePresentation() {
+      document.getElementById('mainContainer').classList.toggle('presentation-mode');
+    }
+
     setupRating('ratingW');
     setupRating('ratingM');
-
-    // start automatically (Pages is HTTPS so it should work)
-    startCamera();
-
-    snap.addEventListener('click', () => {
-      try {
-        // asegurar tamaño antes de dibujar
-        if (video.videoWidth && video.videoHeight) {
-          canvas.width = video.videoWidth;
-          canvas.height = video.videoHeight;
-        }
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        // small animation feedback
-        canvas.style.transform = 'scale(0.995)';
-        setTimeout(()=> canvas.style.transform = '', 120);
-      } catch(e) {
-        console.error('Error al dibujar imagen:', e);
-      }
-    });
-
-    // download the image from canvas
-    downloadBtn.addEventListener('click', () => {
-      try {
-        const url = canvas.toDataURL('image/png');
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'foto-cine.png';
-        a.click();
-      } catch(e) {
-        console.error('Error al descargar:', e);
-      }
-    });
-
-    stopBtn.addEventListener('click', () => {
-      stopCamera();
-      cameraError.textContent = 'Cámara detenida manualmente.';
-    });
-
-    // free camera on page unload
-    window.addEventListener('beforeunload', () => {
-      if (currentStream) currentStream.getTracks().forEach(t => t.stop());
-    });
+    renderHistory();
   </script>
 </body>
 </html>
